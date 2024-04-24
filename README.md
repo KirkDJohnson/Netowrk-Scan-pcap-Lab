@@ -15,20 +15,20 @@ In this lab, I analyzed a packet capture file (referred to as ".pcap" for the re
 <h2>Lab Overview:</h2>
 
 <p align="center">
-Opened the .pcap file in wireshark<br/>
+Opened the .pcap file in wireshark, the capture lasted 900 seconds or 15 minutes with 17508 packets.<br/>
 <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/32fcc69f-94c9-4872-be13-35bf812d0b10" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
-IPv4 conversations shows vast majority of traffic between two local addresses<br/>
+Opended statistics -> conversations. Examining IPv4 shows the vast majority of traffic between two local addresses.<br/>
 <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/9ddb7e2a-89d9-4bfb-90a1-587ef5cb14b4" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
-Examining the TCP traffic, it is clear that the .4 address conducted a port scan of the well known ports 1-1024 against the .5 host.and focused on port 80 HTTP.<br/>
+With TCP traffic, it is clear that the .4 address conducted a port scan of the well known ports (1-1024) against the .5 host.<br/>
 <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/d4ecb423-d3ae-4a5f-8d59-51b5c7ce3b38" alt="Wireshark Scan Analysis"/>
 <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/8af8be6b-2616-4269-a744-302a2e37a2db" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
-When filtering for the for the 210[.]251[.]96[.]4 host it is the evidence lines up<br/>
+When filtering for the for the 210[.]251[.]96[.]4 host it is the evidence is clear it is TCP SYN scan. Typically a stealther way to scan a host because the full TCP handshake doesn't occur that established a connection. <br/>
 <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/40d5e845-9f96-4610-baab-f4eba7336ec7" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
@@ -39,23 +39,18 @@ Now it is established that the scanning occured and the .4 address focused on po
 <br />
 I then pivoted to examine if the attacker uploaded any files by filtering for http.request.method POST and found a post under the directory /uploads.php. I clicked on the packet and followed the TCP stream and discovered the name of the file to be "dbfunctions.php" which granted the attacker the ability to execute commands using as "cmd" <br/>
 <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/14fb9ba7-b2b6-4c1b-896e-bbc6e68a4876" alt="Wireshark Scan Analysis"/>
-  <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/968ae2ab-834f-4883-b83a-93f5e0170e4" alt="Wireshark Scan Analysis"/>
+  <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/0e519305-b6a6-4384-96a9-0c820fd53f2d" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
-The threat actor was seen using two command as cmd: whoami and a command to import a reverse shell using pything with the listening address 210[.]251[.]96[.]4 on port 4422. <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
+The threat actor was seen using two commands as cmd: "whoami" and a command to import a reverse shell using pything with the listening address 210[.]251[.]96[.]4 on port 4422. <br/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/0829c449-e0c4-4ed5-b13a-6d44dd4385a9" alt="Wireshark Scan Analysis"/>
+  <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/6c4e5222-80e1-4bef-ad20-c63a73c32724" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
-  Text <br/>
-<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/abcb8d47-e75b-49e1-b548-870be1a56acd" alt="Wireshark Scan Analysis"/>
-<br />
-<br />
-  Text <br/>
-<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/98fb5ee6-42c8-49dd-aaee-e7292eb22a7a" alt="Wireshark Scan Analysis"/>
-<br />
-<br />
+
+
 <h2>Thoughts</h2>
-Text
+This lab provided excellent practice with Wireshark. Wireshark is quickly becoming one of my favorite tools to work with, right alongside Splunk, due to the wealth of raw data available for examination. Granted, this .pcap was using HTTP, so it wasn't encrypted, making it much easier to view and investigate events. I've heard in the past that even local addresses shouldn't be trusted, and this scenario serves as a perfect example of why a zero-trust model is necessary. Additionally, port scans and tools like gobuster generate a significant amount of traffic. While it's unlikely for a security analyst to be monitoring the wire every second to identify such activities in real-time, it's quite apparent in the packet logs what was happening. This underscores the importance for organizations to adopt a defense-in-depth strategy to prevent incidents like this. It could have been prevented at various stages: initial port scanning could have been blocked by a firewall, directory enumeration could have triggered an alert from an IPS detecting gobuster, or input sanitization could have prevented attackers from uploading scripts. Overall, this lab was highly beneficial as it brought me in the mindset of how such incidents could be remediated and prevented.
 <!--
  ```diff
 - text in red
