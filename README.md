@@ -15,44 +15,47 @@ In this lab, I analyzed a packet capture file (referred to as ".pcap" for the re
 <h2>Lab Overview:</h2>
 
 <p align="center">
-Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
+Opened the .pcap file in wireshark<br/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/32fcc69f-94c9-4872-be13-35bf812d0b10" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
-Text <br/>
+IPv4 conversations shows vast majority of traffic between two local addresses<br/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/9ddb7e2a-89d9-4bfb-90a1-587ef5cb14b4" alt="Wireshark Scan Analysis"/>
+<br />
+<br />
+Examining the TCP traffic, it is clear that the .4 address conducted a port scan of the well known ports 1-1024 against the .5 host.and focused on port 80 HTTP.<br/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/d4ecb423-d3ae-4a5f-8d59-51b5c7ce3b38" alt="Wireshark Scan Analysis"/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/8af8be6b-2616-4269-a744-302a2e37a2db" alt="Wireshark Scan Analysis"/>
+<br />
+<br />
+When filtering for the for the 210[.]251[.]96[.]4 host it is the evidence lines up<br/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/40d5e845-9f96-4610-baab-f4eba7336ec7" alt="Wireshark Scan Analysis"/>
+<br />
+<br />
+Now it is established that the scanning occured and the .4 address focused on port 80, I filtered for that source IP addresses along with http.user_agent to try and find the tools used to scan or enumerate the .5 address. I found that the attacker used gobuster 3.0.1 and sqlmap 1.4.7. <br/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/cbcc18e8-6e09-4ead-8982-9d3e1c4309bc" alt="Wireshark Scan Analysis"/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/983d420b-44a6-4870-a799-0d06b8153cb6" alt="Wireshark Scan Analysis"/>
+<br />
+<br />
+I then pivoted to examine if the attacker uploaded any files by filtering for http.request.method POST and found a post under the directory /uploads.php. I clicked on the packet and followed the TCP stream and discovered the name of the file to be "dbfunctions.php" which granted the attacker the ability to execute commands using as "cmd" <br/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/14fb9ba7-b2b6-4c1b-896e-bbc6e68a4876" alt="Wireshark Scan Analysis"/>
+  <img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/968ae2ab-834f-4883-b83a-93f5e0170e4" alt="Wireshark Scan Analysis"/>
+<br />
+<br />
+The threat actor was seen using two command as cmd: whoami and a command to import a reverse shell using pything with the listening address 210[.]251[.]96[.]4 on port 4422. <br/>
 <img src="" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
   Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/abcb8d47-e75b-49e1-b548-870be1a56acd" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
   Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
-<br />
-<br />
-  Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
-<br />
-<br />
-  Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
-<br />
-<br />
-  Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
-<br />
-<br />
-  Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
-<br />
-<br />
-  Text <br/>
-<img src="" alt="Wireshark Scan Analysis"/>
+<img src="https://github.com/KirkDJohnson/Network-Scan-pcap-Lab/assets/164972007/98fb5ee6-42c8-49dd-aaee-e7292eb22a7a" alt="Wireshark Scan Analysis"/>
 <br />
 <br />
 <h2>Thoughts</h2>
-This lab provided hands on experience analyzing a packet capture (.pcapng file) rather than live analysis on the wire. Obtaining a real packet capture of an attempted malicious attack and analyzing it was incredibly interesting, especially because it was in clear text through http port 80, rather than encrypted. While I have used VirusTotal and CyberChef in previous labs and walkthroughs, knowing that the artifacts pulled from the pcap were real made me we even more curious to dive into resources that others in the cybersecurity community have put together surrounding the attacking IP address and the exploit itself. Moreover, I have used Wireshark previously, but this was the first time I configured Max Mind's GEOIP database to resolve locations from IP addresses and then be able to export as a map, which was another highlight from this lab. 
+Text
 <!--
  ```diff
 - text in red
